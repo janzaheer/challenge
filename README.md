@@ -1,6 +1,13 @@
 # Explor Challenge
 
-## SETUP
+## Demo
+
+Please visit the following link for demo.
+
+https://explor-challenge.herokuapp.com/
+
+
+## Setup to Local environment
 
 Note you must have `Python3.6` installed on your system along with `pip`.
 
