@@ -25,7 +25,7 @@ SECRET_KEY = '#5v9b8)xfg&3%d*1qx$w(a_13jmx%(wq98vjl6effh78)k5i^j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['explor-challeng.herokuapp.com', '*']
 
 
 # Application definition
