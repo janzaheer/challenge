@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load event_utils %}
+{% block content %}
+    <div class="container-fluid table-responsive my-5">
+        <div class="row">
+           <div class="col-12 mx-auto d-flex">
+                <h3>
+                    Nearby Events
+                </h3>
+                <button class="btn btn-info ml-auto d-block btn-sm" type="button" data-toggle="modal" data-target="#searchModal" onclick="getLocation()">Filter</button>
+           </div>
+           <table class="table mt-2 table-bordered table-stripe">
+                <thead>
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Event Date <span class="fa fa-caret-down" aria-hidden="true" onclick="sort()"></span></th>
+                    <th scope="col">Surface</th>
+                    <th scope="col">Route Duration</th>
+                    <th scope="col">Elevation Gain</th>
+                    <th scope="col">AVG Gradient</th>
+                    <th scope="col">Support Amenties</th>
+                    <th scope="col">Registration Fee</th>
+                    <th scope="col">Distance from you</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td scope="row">{{forloop.counter}}</td>
+                            <td>{{event.title}}</td>
+                            <td>{{event.event_date}}</td>
+                            <td>{{event.surface}}</td>
+                            <td>{{event.route_duration}}</td>
+                            <td>{{event.elevation_gain}}</td>
+                            <td>{{event.average_gradient}}</td>
+                            <td>{{event.support_amenities}}</td>
+                            <td>{{event.registration_fee}}</td>
+							<td>{% calculate_event_dist event latitude longitude %} mi.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+        </div>
+    </div>
+
+    {% comment %} Search MODAL {% endcomment %}
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true" style="top:40px;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                 <form class="col-12" action="{% url 'nearby_events' %}">
+                    <div class="form-group col-12">
+                        <label for="eventDate">Event Start Date</label>
+                        <input type="date" class="form-control" id="eventDate" name="eventDate" >
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="surface">Surface</label>
+                        <select class="form-control" id="surface" name="surface">
+                            <option value="">What Surface ?</option>
+                            <option value="road">Road</option>
+                            <option value="gravel">Gravel</option>
+                            <option value="mtb">Mtb</option>
+                        <select>
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="routeDuration">Route Duration</label>
+                        <input type="number" class="form-control" id="routeDuration" name="routeDuration"  placeholder="e.g 30, 40">
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="elevationGain">Elevation Gain</label>
+                        <input type="number" class="form-control" id="elevationGain" name="elevationGain"  placeholder="e.g 30, 40">
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="averageGraident">Average Gradient</label>
+                        <input type="number" class="form-control" id="averageGraident" name="averageGraident"  placeholder="e.g 30, 40">
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="supportAmenties">Support Amenties</label>
+                        <select class="form-control" id="supportAmenties" name="supportAmenties">
+                            <option value="">What Support Amenties ?</option>
+                            <option value="sag">Sag</option>
+                            <option value="food stops">Food Stops</option>
+                            <option value="post-ride feast">Post Ride Feast</option>
+                        <select>
+                    </div>
+                    <div class="col-12">
+                        <input type="text" id="latitude" name="latitude" hidden>
+                        <input type="text" id="longitude" name="longitude" hidden>
+                    </div>
+                    <div class="col-4 ml-auto">
+                        <button class="btn btn-outline-secondary rounded btn-block" type="submit">Filter</button>
+                    </div>
+                </form>
+            </div>
+            <br>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'js/search.js' %}"></script>
+{% endblock%}
