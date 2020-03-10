@@ -4,19 +4,59 @@
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(
     map
   )
-
+  let  markers = [];
   latLng.forEach(({ latitude, longitude, id, title }) => {
-    L.marker([latitude, longitude], { icon: generateClassIcon(id) })
+    const mark = L.marker([latitude, longitude], { icon: generateClassIcon(id) })
       .addTo(map)
       .bindPopup(title)
       .on('mouseover', () => hoverDiv(id))
       .on('mouseout', () => unHoverDiv(id))
+    markers.push(mark)
   })
 
   map.on('dragend', function(e) {
-    console.log('drag end')
     const { lat, lng } = map.getCenter()
-    window.location.href = `/?latitude=${lat}&longitude=${lng}`
+
+    fetch(`api/map-drag?latitude=${lat}&longitude=${lng}`).then(response => response.json()).then(result => {
+        const eventsDiv = document.getElementById('events');
+        const output = JSON.parse(result.events).map(({fields,pk})=>{
+            return `
+                <div class="row color" data-select=${pk} onmouseover="cardIn(${pk})" onmouseout="cardOut(${pk})">
+                    <div class="col-md-3 activity">
+                        <a class="explorbutton" href="https://www.mtbproject.com/trail/5025822/marshall-canyon" target="_blank"> 
+                            <div class="img-fluid  rounded my-2 ml-3 activity_img" style = "background: url('https://cdn-files.apstatic.com/mtb/5260391_medium_1554330297.jpg'); background-position: center; background-size: cover;"></div>
+                        </a>
+                    </div>
+                    <div class="col-md-8 my-2 activity_desc">
+                        <a class="explorbutton" href="https://www.mtbproject.com/trail/5025822/marshall-canyon" target="_blank"> 
+                        <h3 class="mb-0 pb-0">${fields.title}</h3></a>
+                        <p>
+                        Flow like a dream beneath the oaks in SoCal&#39;s very own Sherwood Forest
+                            <ul>
+                                <li>  <i class="fas fa-star"></i>  <i class="fas fa-star"></i>  <i class="fas fa-star"></i>  <i class="fas fa-star"></i>  (85 votes)</li>
+                                <li>blue</li>
+                                <li>10.4 miles</li>
+                                <li>1355 ft ascent</li>
+                            </ul>
+                        </p>
+                    </div>
+			  </div>
+            `
+        }).join('')
+        eventsDiv.innerHTML = output
+
+        markers.forEach(marker => map.removeLayer(marker))
+        
+        markers = [];
+        JSON.parse(result.events).forEach(({fields,pk})=>{
+            const mark = L.marker([fields.latitude, fields.longitude], { icon: generateClassIcon(pk) })
+            .addTo(map)
+            .bindPopup(fields.title)
+            .on('mouseover', () => hoverDiv(pk))
+            .on('mouseout', () => unHoverDiv(pk))
+            markers.push(mark)
+        })
+    })
   })
 })()
 
@@ -52,20 +92,4 @@ function generateClassIcon(number) {
     iconSize: [40, 40],
     className: `marker-color-${number}`
   })
-}
-
-function clickHome() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(geoSuccess, geoError)
-  } else {
-    alert('Geolocation is not supported by this browser.')
-  }
-}
-
-function geoSuccess({ coords: { latitude, longitude } }) {
-  window.location.href = `/search?latitude=${latitude}&longitude=${longitude}`
-}
-
-function geoError() {
-  alert('Error fetching location')
 }

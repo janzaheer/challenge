@@ -15,7 +15,7 @@
                     <tr>
                     <th scope="col">#</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Event Date <span class="fa fa-caret-down" aria-hidden="true" onclick="sort()"></span></th>
+                    <th scope="col">Event Date <span class="fa fa-caret-down" aria-hidden="true" onclick="filter(true)" data-sort="asc"></span></th>
                     <th scope="col">Surface</th>
                     <th scope="col">Route Duration</th>
                     <th scope="col">Elevation Gain</th>
@@ -25,12 +25,12 @@
                     <th scope="col">Distance from you</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="nearby-events">
                     {% for event in events %}
                         <tr>
                             <td scope="row">{{forloop.counter}}</td>
                             <td>{{event.title}}</td>
-                            <td>{{event.event_date}}</td>
+                            <td>{{event.event_date|date:'Y-m-d'}}</td>
                             <td>{{event.surface}}</td>
                             <td>{{event.route_duration}}</td>
                             <td>{{event.elevation_gain}}</td>
@@ -51,12 +51,12 @@
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="searchModalLabel">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-button">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                 <form class="col-12" action="{% url 'nearby_events' %}">
+                 <form class="col-12">
                     <div class="form-group col-12">
                         <label for="eventDate">Event Start Date</label>
                         <input type="date" class="form-control" id="eventDate" name="eventDate" >
@@ -96,7 +96,7 @@
                         <input type="text" id="longitude" name="longitude" hidden>
                     </div>
                     <div class="col-4 ml-auto">
-                        <button class="btn btn-outline-secondary rounded btn-block" type="submit">Filter</button>
+                        <button class="btn btn-outline-secondary rounded btn-block" type="button" onclick='filter()'>Filter</button>
                     </div>
                 </form>
             </div>

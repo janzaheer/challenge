@@ -8,7 +8,7 @@
 		<small></small>
 	  </h1>
 			  <!-- Route -->
-
+            <div id="events">        
 			  {% for event in events %}
 			  	<div class="row color" data-select="{{event.id}}" onmouseover="cardIn({{event.id}})" onmouseout="cardOut({{event.id}})">
 				<div class="col-md-3 activity">
@@ -31,7 +31,7 @@
 				</div>
 			  </div>
 			  {% endfor %}
-		  
+		  </div>
     </div>
     <div class="map_col">
 		<div id="map-render" style="width:100%; height:100%;"></div>
